@@ -16,7 +16,7 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import quote, unquote, urlparse, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 from urllib.robotparser import RobotFileParser
 
@@ -118,6 +118,15 @@ def robots_allowed(url: str, user_agent: str) -> bool:
     return True
 
 
+def clean_url(url: str) -> str:
+    """Ensure URL is properly percent-encoded for HTTP requests (RFC 3986)."""
+    parts = urlsplit(url)
+    path = quote(unquote(parts.path), safe="/:@&=+$,-_.!~*'()")
+    query = quote(unquote(parts.query), safe="/:@&=+$,-_.!~*'()?")
+    fragment = quote(unquote(parts.fragment), safe="/:@&=+$,-_.!~*'()")
+    return urlunsplit((parts.scheme, parts.netloc, path, query, fragment))
+
+
 def fetch(url: str, user_agent: str, timeout: float) -> tuple[str, str]:
     request = Request(url, headers={"User-Agent": user_agent, "Accept": "text/html,text/plain;q=0.9,*/*;q=0.1"})
     with urlopen(request, timeout=timeout) as response:  # noqa: S310 - URL is supplied by the course user.
@@ -125,7 +134,12 @@ def fetch(url: str, user_agent: str, timeout: float) -> tuple[str, str]:
         if content_type not in {"text/html", "text/plain"}:
             raise ValueError(f"unsupported content type: {content_type}")
         charset = response.headers.get_content_charset() or "utf-8"
-        return response.geturl(), response.read().decode(charset, errors="replace")
+        raw_body = response.read()
+        try:
+            body = raw_body.decode(charset, errors="replace")
+        except LookupError:
+            body = raw_body.decode("utf-8", errors="replace")
+        return response.geturl(), body
 
 
 def extract_content(body: str) -> tuple[str, str]:
@@ -199,7 +213,8 @@ def main() -> int:
     manifest = existing_manifest(manifest_path)
     successful = failed = 0
     for index, row in enumerate(rows):
-        url = row["url"]
+        raw_url = row["url"]
+        url = clean_url(raw_url)
         if not robots_allowed(url, args.user_agent):
             failed += 1
             continue
@@ -223,9 +238,9 @@ def main() -> int:
             }
             successful += 1
             print(f"Saved {output_path}")
-        except (HTTPError, URLError, TimeoutError, UnicodeError, ValueError, OSError) as error:
+        except (HTTPError, URLError, TimeoutError, UnicodeError, ValueError, OSError, LookupError) as error:
             failed += 1
-            print(f"Skipping {url}: {error}", file=sys.stderr)
+            print(f"Skipping {raw_url}: {error}", file=sys.stderr)
     write_manifest(manifest_path, manifest)
     print(f"Finished: {successful} saved, {failed} skipped. Manifest: {manifest_path}")
     return 1 if failed else 0

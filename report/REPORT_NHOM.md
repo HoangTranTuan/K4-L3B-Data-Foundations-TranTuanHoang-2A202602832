@@ -52,9 +52,15 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | Tài liệu | Chiến lược (Strategy) | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không? |
 |-----------|----------|-------------|------------|-------------------|
-| | FixedSizeChunker (`fixed_size`) | | | |
-| | SentenceChunker (`by_sentences`) | | | |
-| | RecursiveChunker (`recursive`) | | | |
+| `return-refund-evidence.md` | FixedSizeChunker (`fixed_size`) | 21 | 196.8 | Kém: Cắt cứng theo số ký tự nên dễ đứt giữa câu, giữa từ. |
+| | SentenceChunker (`by_sentences`) | 10 | 310.1 | Khá: Giữ trọn câu ngữ pháp nhưng độ dài các chunk chênh lệch. |
+| | RecursiveChunker (`recursive`) | 21 | 147.3 | Tốt: Ưu tiên ngắt theo đoạn văn `\n\n` và câu, giữ trọn ý. |
+| `return-refund-general.md` | FixedSizeChunker (`fixed_size`) | 41 | 196.8 | Kém: Nhiều chunk bị ngắt cụt giữa câu hỏi và câu trả lời. |
+| | SentenceChunker (`by_sentences`) | 9 | 669.0 | Trung bình: Gom 3 câu khiến có chunk rất dài do câu trong tài liệu dài. |
+| | RecursiveChunker (`recursive`) | 37 | 162.1 | Tốt: Đảm bảo độ dài chunk vừa phải, không phá vỡ cấu trúc điều khoản. |
+| `return-refund-policy.md` | FixedSizeChunker (`fixed_size`) | 128 | 199.6 | Kém: Mất liên kết giữa tiêu đề điều khoản và nội dung quy định. |
+| | SentenceChunker (`by_sentences`) | 46 | 414.5 | Khá: Giữ trọn vẹn từng câu điều khoản chính sách. |
+| | RecursiveChunker (`recursive`) | 128 | 148.3 | Tốt: Ranh giới chunk tự nhiên theo đoạn văn quy định. |
 
 ### Chiến lược của từng thành viên
 
