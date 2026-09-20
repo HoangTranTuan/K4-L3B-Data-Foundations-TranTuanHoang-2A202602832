@@ -1,0 +1,84 @@
+======================================================================
+ K4-L3B BENCHMARK RUNNER — THÀNH VIÊN 2 (RecursiveChunker)
+======================================================================
+[*] Chiến lược Chunking : RecursiveChunker (chunk_size=500)
+[*] Đang nạp dữ liệu từ  : data/return-refund
+[*] Tổng số chunk đã nạp: 106 chunks
+[*] Embedding backend   : gemini (gemini-embedding-001)
+
+======================================================================
+ KẾT QUẢ CHẠY 5 CÂU HỎI BENCHMARK
+======================================================================
+
+--- [CÂU HỎI 1] ---
+Query       : Người mua có thể gửi yêu cầu Trả hàng/Hoàn tiền cho đơn hàng thông thường trong bao lâu?
+Filter      : None
+Gold Answer : Người mua có thể gửi yêu cầu Trả hàng/Hoàn tiền trong vòng 15 ngày kể từ khi đơn hàng được cập nhật trạng thái 'Giao hàng thành công'
+Top-3 Chunks:
+  [1] Score: +0.8040 | Nguồn: return-refund-general | Đoạn trích: Đối với các đơn hàng khác: 15 ngày kể từ lúc đơn hàng được cập nhật trạng thái ‘Giao hàng thành công’.  ⚠️ Lưu ý:  Bạn vẫn có thể gửi yêu cầ...
+  [2] Score: +0.7958 | Nguồn: return-refund-policy | Đoạn trích: 3.2. Người Mua có thể gửi yêu cầu trả hàng/hoàn tiền trong vòng 15 (mười lăm) ngày kể từ lúc đơn hàng được cập nhật giao hàng thành công. Ri...
+  [3] Score: +0.7913 | Nguồn: return-refund-policy | Đoạn trích: Một số trường hợp Người Mua có nhu cầu trả hàng/hoàn tiền sau thời hạn trên, Shopee sẽ xem xét và có thể hỗ trợ Người Mua được trả hàng/hoàn...
+Agent Answer: [Agent] Dựa vào tài liệu: Đối với các đơn hàng khác: 15 ngày kể từ lúc đơn hàng được cập nhật trạng thái ‘Giao hàng thành công’. ⚠️ Lưu ý: Bạn vẫn có thể gửi yêu cầu Trả hàng/Hoàn tiền sau khi đã bấm nút ‘Đã nhận được hàng’ và vẫn còn trong thời hạn 15 ngày Trả hàng/Hoàn tiền...
+Đánh giá    : 2/2 điểm (Tìm thấy trong Top-3: True)
+
+--- [CÂU HỎI 2] ---
+Query       : Thời hạn yêu cầu Trả hàng/Hoàn tiền đối với thực phẩm tươi sống và đông lạnh là bao lâu?
+Filter      : None
+Gold Answer : Người mua phải gửi yêu cầu trong vòng 24 giờ kể từ khi đơn hàng được cập nhật trạng thái 'Giao hàng thành công', trừ trường hợp khiếu nại với lý do chưa nhận được hàng.
+Top-3 Chunks:
+  [1] Score: +0.8729 | Nguồn: return-refund-policy | Đoạn trích: 3.2. Người Mua có thể gửi yêu cầu trả hàng/hoàn tiền trong vòng 15 (mười lăm) ngày kể từ lúc đơn hàng được cập nhật giao hàng thành công. Ri...
+  [2] Score: +0.8334 | Nguồn: return-refund-general | Đoạn trích: Thời gian để Shopee tiếp nhận yêu cầu Trả hàng/Hoàn tiền từ bạn sẽ là:  Đối với đơn hàng giao thực phẩm tươi sống & đông lạnh (trừ lý do Chư...
+  [3] Score: +0.7561 | Nguồn: return-refund-general | Đoạn trích: # Trả hàng/Hoàn tiền - Những quy định chung về Trả hàng/Hoàn tiền của Shopee  1. Điều kiện Trả hàng/Hoàn tiền của Shopee  1.1. Nguyên tắc ch...
+Agent Answer: [Agent] Dựa vào tài liệu: 3.2. Người Mua có thể gửi yêu cầu trả hàng/hoàn tiền trong vòng 15 (mười lăm) ngày kể từ lúc đơn hàng được cập nhật giao hàng thành công. Riêng đối với các Sản Phẩm là thực phẩm tươi sống và đông lạnh, Người Mua cần gửi yêu cầu trả hàng/hoàn tiền tro...
+Đánh giá    : 1/2 điểm (Tìm thấy trong Top-3: True)
+
+--- [CÂU HỎI 3] ---
+Query       : Với đơn hàng do Người bán tự vận chuyển, thời hạn yêu cầu Trả hàng/Hoàn tiền được tính như thế nào?
+Filter      : None
+Gold Answer : Người mua có thể gửi yêu cầu trong 15 ngày kể từ khi bấm 'Đã nhận được hàng', hoặc 20 ngày kể từ lúc đơn hàng được cập nhật 'Lấy hàng thành công' nếu chưa bấm 'Đã nhận được hàng'.
+Top-3 Chunks:
+  [1] Score: +0.7931 | Nguồn: return-refund-general | Đoạn trích: Thời gian để Shopee tiếp nhận yêu cầu Trả hàng/Hoàn tiền từ bạn sẽ là:  Đối với đơn hàng giao thực phẩm tươi sống & đông lạnh (trừ lý do Chư...
+  [2] Score: +0.7746 | Nguồn: return-refund-policy | Đoạn trích: Để biết thêm thông tin về thời hạn phản hồi của Người Bán, vui lòng nhấn vào ĐÂY.  Để biết thêm thông tin về việc hoàn tiền không cần trả Sả...
+  [3] Score: +0.7731 | Nguồn: return-refund-seller | Đoạn trích: Người Bán sẽ không phải chịu bất kỳ chi phí vận chuyển cho việc trả hàng chiều hoàn trả sản phẩm đối với đơn yêu cầu trả hàng/hoàn tiền một ...
+Agent Answer: [Agent] Dựa vào tài liệu: Thời gian để Shopee tiếp nhận yêu cầu Trả hàng/Hoàn tiền từ bạn sẽ là: Đối với đơn hàng giao thực phẩm tươi sống & đông lạnh (trừ lý do Chưa nhận được hàng): Trong vòng 24 giờ kể từ lúc đơn hàng được cập nhật trạng thái ‘Giao hàng thành công’. Đối vớ...
+Đánh giá    : 2/2 điểm (Tìm thấy trong Top-3: True)
+
+--- [CÂU HỎI 4] ---
+Query       : Người mua cần cung cấp những thông tin hoặc bằng chứng gì khi gửi yêu cầu Trả hàng/Hoàn tiền?
+Filter      : None
+Gold Answer : Người mua cần chọn lý do khiếu nại, mô tả tình trạng sản phẩm và cung cấp hình ảnh hoặc video làm bằng chứng cho yêu cầu Trả hàng/Hoàn tiền.
+Top-3 Chunks:
+  [1] Score: +0.8604 | Nguồn: return-refund-evidence | Đoạn trích: # Trả hàng/Hoàn tiền - Hướng dẫn chuẩn bị bằng chứng khi yêu cầu Trả hàng/Hoàn tiền  Khi bạn cần gửi yêu cầu Trả hàng/Hoàn tiền trên Shopee,...
+  [2] Score: +0.7863 | Nguồn: return-refund-evidence | Đoạn trích: ⚠️ Lưu ý: Khi bạn cần gửi trả sản phẩm, Shopee khuyến khích bạn quay lại video đóng kiện hàng hoàn trả. Video này cũng cần đáp ứng các tiêu ...
+  [3] Score: +0.7823 | Nguồn: return-refund-general | Đoạn trích: # Trả hàng/Hoàn tiền - Những quy định chung về Trả hàng/Hoàn tiền của Shopee  1. Điều kiện Trả hàng/Hoàn tiền của Shopee  1.1. Nguyên tắc ch...
+Agent Answer: [Agent] Dựa vào tài liệu: # Trả hàng/Hoàn tiền - Hướng dẫn chuẩn bị bằng chứng khi yêu cầu Trả hàng/Hoàn tiền Khi bạn cần gửi yêu cầu Trả hàng/Hoàn tiền trên Shopee, việc cung cấp đầy đủ và chính xác bằng chứng là rất quan trọng để đảm bảo yêu cầu của bạn được xử lý nhanh chó...
+Đánh giá    : 2/2 điểm (Tìm thấy trong Top-3: True)
+
+--- [CÂU HỎI 5] ---
+Query       : Sau khi nhận thông báo liên quan đến yêu cầu Trả hàng/Hoàn tiền, Người bán phải phản hồi trong bao lâu?
+Filter      : {'audience': 'seller'}
+Gold Answer : Người bán cần gửi phản hồi trong vòng 02 ngày lịch kể từ ngày nhận được thông báo của Shopee trong các trường hợp được quy định.
+Top-3 Chunks:
+  [1] Score: +0.8178 | Nguồn: return-refund-seller | Đoạn trích: Người Bán cần gửi phản hồi trong vòng 02 ngày lịch (hoặc thời hạn khác được quy định bởi Shopee trong từng thời điểm) kể từ ngày nhận được t...
+  [2] Score: +0.8152 | Nguồn: return-refund-seller | Đoạn trích: Shopee sẽ tự động hoàn tiền cho Người Mua trong trường hợp Người Bán không phản hồi trong khoảng thời gian đã được quy định trước (trong vòn...
+  [3] Score: +0.7945 | Nguồn: return-refund-seller | Đoạn trích: # Chính sách Trả hàng và Hoàn tiền - Quyền và Trách nhiệm của Người Bán  ## 1. QUYỀN CỦA NGƯỜI BÁN  Khi nhận được yêu cầu trả hàng và/hoặc h...
+Agent Answer: [Agent] Dựa vào tài liệu: Để biết thêm thông tin về thời hạn phản hồi của Người Bán, vui lòng nhấn vào ĐÂY. Để biết thêm thông tin về việc hoàn tiền không cần trả Sản Phẩm, vui lòng nhấn vào ĐÂY. Người Bán cần gửi phản hồi trong vòng 02 ngày lịch (hoặc thời hạn khác được quy ...
+Đánh giá    : 2/2 điểm (Tìm thấy trong Top-3: True)
+
+======================================================================
+ KẾT QUẢ A/B TEST BẮT BUỘC: CÓ FILTER vs KHÔNG FILTER (Câu 5)
+======================================================================
+
+[A] KHÔNG LỌC (metadata_filter=None):
+  Top 1: return-refund-policy (audience: buyer) | score=0.8318
+  Top 2: return-refund-seller (audience: seller) | score=0.8178
+  Top 3: return-refund-policy (audience: buyer) | score=0.8164
+
+[B] CÓ LỌC (metadata_filter={'audience': 'seller'}):
+  Top 1: return-refund-seller (audience: seller) | score=0.8178
+  Top 2: return-refund-seller (audience: seller) | score=0.8152
+  Top 3: return-refund-seller (audience: seller) | score=0.7945
+
+======================================================================
+ TỔNG KẾT BENCHMARK: 9/10 điểm
+======================================================================

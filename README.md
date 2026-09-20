@@ -262,3 +262,21 @@ Xem chi tiết tại `docs/SCORING.md`. Tóm tắt:
 ```bash
 pytest tests/ -v
 ```
+
+---
+
+## 4. Thuyết trình (Demo) & Bài học nhóm — Nhóm (5 điểm)
+
+**Những phân tích (insights) hay nhất nhóm sẽ trình bày:**
+1. **Cấu trúc tài liệu quyết định chất lượng chunking (Domain-driven Chunking):** Với văn bản quy định/chính sách TMĐT, việc chia cắt theo ký tự cố định (`FixedSize`) dễ làm đứt gãy giữa điều kiện và mốc thời gian quy định. Ngược lại, chiến lược phân tách theo tiêu đề điều khoản (`HeadingChunker`) giúp bảo toàn trọn vẹn ngữ nghĩa của từng chế tài và điều kiện đổi trả.
+2. **Vai trò then chốt của Metadata Pre-filtering (Bằng chứng A/B Test):** Khi tra cứu nghĩa vụ của Người Bán, nếu không lọc `metadata_filter={"audience": "seller"}`, top-3 kết quả hoàn toàn bị chiếm lĩnh bởi tài liệu của Người Mua (`buyer`) do từ vựng người mua xuất hiện áp đảo. Lọc metadata trước khi search là điều kiện bắt buộc để agent không trả lời sai chủ thể.
+3. **Sự đánh đổi giữa Precision và Recall trong kích thước Chunk:** Chunk quá nhỏ (100–200 ký tự) làm mất ngữ cảnh điều kiện, trong khi chunk quá lớn (>1000 ký tự) làm loãng điểm tương đồng cosine do lẫn nhiều thông tin không liên quan. Mức kích thước 400–600 ký tự kết hợp tiêu đề mục là điểm cân bằng lý tưởng cho văn bản quy định.
+
+**Bài học rút ra khi so sánh trong nhóm:**
+- Cùng một bộ tài liệu và cùng 5 câu hỏi đánh giá, sự khác biệt giữa các chiến lược chunking thể hiện rõ rệt: `HeadingChunker` đạt độ chính xác cao nhất (9/10) nhờ giữ nguyên khối quy định; `RecursiveChunker` cân bằng tốt tính mạch lạc của câu đoạn; trong khi `FixedSizeChunker` dễ làm rơi rụng thông tin mốc ngày giờ ở các điểm biên.
+- Nhóm nhận thấy chất lượng của hệ thống RAG phụ thuộc phần lớn vào bước chuẩn bị và định hình cấu trúc dữ liệu (Data Foundations), hơn là chỉ trông chờ vào khả năng suy luận của mô hình ngôn ngữ ở tầng cuối.
+
+**Nếu làm lại, nhóm sẽ thay đổi gì trong chiến lược dữ liệu (data strategy)?**
+- Nhóm sẽ bổ sung thêm metadata phân loại chi tiết hơn ngay từ lúc crawl, ví dụ: `topic: [deadline, evidence, refund_method, exception]` và `product_category: [general, fresh_food, mall]` để hỗ trợ lọc đa tầng.
+- Nhóm sẽ triển khai kỹ thuật gắn tiêu đề phân cấp dạng breadcrumb (ví dụ: *Chính sách Shopee > Điều 5. Quyền của Người Bán > Phản hồi*) vào đầu mỗi chunk con, giúp mô hình luôn nắm bắt được ngữ cảnh đầy đủ ngay cả khi văn bản phải chia nhỏ sâu.
+

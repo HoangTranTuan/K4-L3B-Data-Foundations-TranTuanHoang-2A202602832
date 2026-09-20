@@ -63,25 +63,58 @@ class OpenAIEmbedder:
 
 
 class GeminiEmbedder:
-    """Google Gemini embeddings API-backed embedder (google-genai SDK).
+    """Google Gemini embeddings API-backed embedder.
 
-    Free-tier alternative to OpenAI for students without an OpenAI key —
-    a Gemini API key (aistudio.google.com) has a free quota, no billing card needed.
+    Supports google-genai SDK if installed, with seamless fallback to
+    the official Gemini REST API (no extra dependencies required).
     """
 
     def __init__(self, model_name: str = GEMINI_EMBEDDING_MODEL) -> None:
-        from google import genai
-
         api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY (or GOOGLE_API_KEY) is required for GeminiEmbedder")
+        self.api_key = api_key
         self.model_name = model_name
-        self._backend_name = model_name
-        self.client = genai.Client(api_key=api_key)
+        self._backend_name = f"gemini ({model_name})"
+        self._cache: dict[str, list[float]] = {}
+        self.client = None
+
+        try:
+            from google import genai
+            self.client = genai.Client(api_key=api_key)
+        except Exception:
+            self.client = None
 
     def __call__(self, text: str) -> list[float]:
-        response = self.client.models.embed_content(model=self.model_name, contents=text)
-        return [float(value) for value in response.embeddings[0].values]
+        if text in self._cache:
+            return self._cache[text]
+
+        if self.client is not None:
+            try:
+                response = self.client.models.embed_content(model=self.model_name, contents=text)
+                vector = [float(value) for value in response.embeddings[0].values]
+                self._cache[text] = vector
+                return vector
+            except Exception:
+                pass  # Fall back to REST API
+
+        import json
+        import urllib.request
+
+        model_name = self.model_name
+        clean_name = model_name if model_name.startswith("models/") else f"models/{model_name}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/{clean_name}:embedContent?key={self.api_key}"
+        payload = json.dumps({
+            "model": clean_name,
+            "content": {"parts": [{"text": text}]},
+        }).encode("utf-8")
+
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            vector = [float(v) for v in data["embedding"]["values"]]
+            self._cache[text] = vector
+            return vector
 
 
 _mock_embed = MockEmbedder()
