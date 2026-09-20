@@ -34,14 +34,14 @@
 
 **Tài liệu 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
 > *Trình bày phép tính:*
-> - Bước nhảy giữa các chunk liên tiếp: $S = \text{chunk\_size} - \text{overlap} = 500 - 50 = 450$ ký tự.
-> - Điểm bắt đầu các chunk theo vòng lặp: $0, 450, 900, 1350, \dots, 9900$.
-> - Áp dụng công thức tổng quát: $\lceil \frac{L - \text{overlap}}{\text{chunk\_size} - \text{overlap}} \rceil = \lceil \frac{10000 - 50}{500 - 50} \rceil = \lceil \frac{9950}{450} \rceil = \lceil 22.11 \rceil = 23$.
-> - Chunk cuối cùng bắt đầu từ vị trí 9,900 đến 10,000 (độ dài 100 ký tự).
+> - Mỗi chunk mới sẽ dịch chuyển đi một khoảng bằng kích thước chunk trừ đi độ chồng chéo: 500 - 50 = 450 ký tự.
+> - Điểm bắt đầu của các chunk lần lượt là: 0, 450, 900, 1350, ... cho đến 9900 (gồm 23 vị trí cắt).
+> - Để bao phủ toàn bộ 10,000 ký tự, ta lấy (10,000 - 50) chia cho 450 được xấp xỉ 22.11, làm tròn lên là 23.
+> - Chunk thứ 23 bắt đầu từ ký tự 9,900 đến 10,000 và có chiều dài 100 ký tự.
 > *Đáp án:* **23 chunks**.
 
 **Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk thay đổi thế nào? Tại sao muốn độ chồng chéo nhiều hơn?**
-> Khi overlap tăng lên 100 ký tự, bước nhảy giảm xuống $S = 500 - 100 = 400$ ký tự, số lượng chunk sẽ là $\lceil \frac{10000 - 100}{400} \rceil = \lceil \frac{9900}{400} \rceil = \lceil 24.75 \rceil = 25$ chunks (tăng thêm 2 chunks). Chúng ta muốn độ chồng chéo nhiều hơn để bảo toàn trọn vẹn ngữ cảnh tại các ranh giới cắt (boundary context), tránh làm đứt đôi câu văn hay cụm thực thể quan trọng, giúp bộ truy xuất (retriever) luôn nắm bắt đầy đủ thông tin ngữ nghĩa.
+> Khi độ chồng chéo tăng lên 100 ký tự, khoảng dịch chuyển giữa các chunk giảm còn 400 ký tự (500 - 100). Số lượng chunk cần tạo là (10,000 - 100) chia cho 400 được 24.75, làm tròn lên là 25 chunks (tăng thêm 2 chunks so với trước). Chúng ta muốn có độ chồng chéo nhiều hơn nhằm giữ trọn vẹn ngữ cảnh tại các điểm cắt giữa hai chunk kề nhau, tránh làm đứt đôi câu văn hay cụm từ khóa quan trọng, giúp hệ thống tìm kiếm thông tin chính xác và đầy đủ hơn.
 
 ---
 
@@ -55,7 +55,7 @@ Giải thích cách tiếp cận của bạn khi lập trình (implement) các p
 > Sử dụng regular expression `r"(?<=[.!?])(?:\s+|\n)"` với kỹ thuật positive lookbehind để phát hiện ranh giới kết thúc câu sau các ký tự `.`, `!`, `?` kèm khoảng trắng/xuống dòng mà không làm mất dấu câu gốc. Các câu trích xuất được làm sạch khoảng trắng thừa và gom nhóm thành từng khối tối đa `max_sentences_per_chunk` câu. Xử lý tốt các edge cases như văn bản rỗng, chuỗi chỉ chứa khoảng trắng, và đoạn cuối cùng có số câu ít hơn kích thước định mức.
 
 **`RecursiveChunker.chunk` / `_split`** — hướng tiếp cận:
-> Thuật toán hoạt động theo cơ chế đệ quy phân cấp dựa trên danh sách ký tự phân tách ưu tiên: đoạn văn (`"\n\n"`), dòng (`"\n"`), câu (`". "`), từ (`" "`), và ký tự (`""`). Trường hợp cơ sở (base case) xảy ra khi đoạn văn bản hiện tại đã có độ dài $\le \text{chunk\_size}$, hoặc khi danh sách dấu phân tách đã cạn (chuyển sang cắt lát ký tự cố định). Các mảnh phân tách nhỏ sau đó được ghép nối tuần hoàn (accumulate/merge) chừng nào tổng chiều dài còn nằm trong ngưỡng `chunk_size` để tối đa hóa ngữ cảnh trong mỗi chunk.
+> Thuật toán hoạt động theo cơ chế đệ quy phân cấp dựa trên danh sách ký tự phân tách ưu tiên: đoạn văn (`"\n\n"`), dòng (`"\n"`), câu (`". "`), từ (`" "`), và ký tự (`""`). Trường hợp cơ sở (base case) xảy ra khi đoạn văn bản hiện tại đã có độ dài nhỏ hơn hoặc bằng `chunk_size`, hoặc khi danh sách dấu phân tách đã duyệt hết (chuyển sang cắt theo số lượng ký tự). Các mảnh phân tách nhỏ sau đó được ghép nối tuần hoàn (accumulate/merge) chừng nào tổng chiều dài vẫn nằm trong giới hạn `chunk_size` để tối đa hóa ngữ cảnh trong mỗi chunk.
 
 ### Lớp EmbeddingStore
 
